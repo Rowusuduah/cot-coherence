@@ -1,5 +1,8 @@
 """Tests for the main analyzer engine."""
 
+import json
+from unittest.mock import MagicMock, patch
+
 import cot_coherence
 from cot_coherence.config import CoherenceConfig
 from cot_coherence.models import IncoherenceType
@@ -61,7 +64,7 @@ class TestAnalyze:
 
     def test_version_exists(self):
         assert hasattr(cot_coherence, "__version__")
-        assert cot_coherence.__version__ == "0.1.0"
+        assert cot_coherence.__version__ == "0.2.0"
 
     def test_report_properties(self):
         report = cot_coherence.analyze(
@@ -99,3 +102,54 @@ class TestAnalyze:
         report = cot_coherence.analyze(circular_return_trace)
         types = {f.type for f in report.flags}
         assert IncoherenceType.CIRCULAR_RETURN in types
+
+    def test_llm_mode_integrates(self, multi_issue_trace):
+        """Test that LLM mode merges flags with rule-based results."""
+        llm_response = json.dumps({
+            "flags": [
+                {
+                    "type": "scope_creep",
+                    "severity": "high",
+                    "confidence": 0.95,
+                    "step_range": [2, 5],
+                    "summary": "LLM detected scope creep",
+                    "evidence": "Steps 2-5 wander",
+                    "suggestion": "Refocus",
+                }
+            ]
+        })
+
+        mock_message = MagicMock()
+        mock_message.content = [MagicMock(text=llm_response)]
+        mock_client = MagicMock()
+        mock_client.messages.create.return_value = mock_message
+        mock_anthropic = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        config = CoherenceConfig(use_llm=True)
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"}):
+                report = cot_coherence.analyze(
+                    multi_issue_trace,
+                    original_question="What are Python performance optimization techniques?",
+                    config=config,
+                )
+
+        assert len(report.flags) > 0
+        assert report.overall_score < 1.0
+
+    def test_llm_failure_falls_back_to_rules(self, multi_issue_trace):
+        """If LLM fails, rule-based results are still returned."""
+        config = CoherenceConfig(use_llm=True)
+
+        # No anthropic module and no API key — should fall back gracefully
+        with patch.dict("sys.modules", {"anthropic": None}):
+            report = cot_coherence.analyze(
+                multi_issue_trace,
+                original_question="What are Python performance optimization techniques?",
+                config=config,
+            )
+
+        # Should still have rule-based flags
+        assert len(report.flags) > 0

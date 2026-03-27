@@ -12,6 +12,8 @@ class CoherenceConfig(BaseModel):
 
     use_llm: bool = False
     llm_model: str = "claude-haiku-4-5-20251001"
+    llm_temperature: float = Field(default=0.0, ge=0.0, le=1.0)
+    llm_max_tokens: int = Field(default=2048, ge=256, le=8192)
     sensitivity: float = Field(default=0.5, ge=0.0, le=1.0)
     weights: dict[IncoherenceType, float] = Field(
         default_factory=lambda: {t: 1.0 for t in IncoherenceType}

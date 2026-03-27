@@ -1,6 +1,6 @@
 """cot-coherence: Detect silent incoherence in AI chain-of-thought reasoning."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .analyzer import analyze
 from .config import CoherenceConfig

@@ -42,6 +42,11 @@ def _build_cli():  # type: ignore[no-untyped-def]
     @click.option("-s", "--sensitivity", default=0.5, type=float, help="Sensitivity (0-1).")
     @click.option("--json-output", "json_out", is_flag=True, help="Output as JSON.")
     @click.option("--no-horizon", is_flag=True, help="Disable horizon analysis.")
+    @click.option(
+        "--use-llm", is_flag=True,
+        help="Enable LLM-powered detection (requires ANTHROPIC_API_KEY).",
+    )
+    @click.option("--llm-model", default="claude-haiku-4-5-20251001", help="LLM model to use.")
     def check(
         file: str | None,
         question: str,
@@ -49,8 +54,20 @@ def _build_cli():  # type: ignore[no-untyped-def]
         sensitivity: float,
         json_out: bool,
         no_horizon: bool,
+        use_llm: bool,
+        llm_model: str,
     ) -> None:
         """Analyze a chain-of-thought trace for incoherence."""
+        if use_llm:
+            import os
+
+            if not os.environ.get("ANTHROPIC_API_KEY"):
+                click.echo(
+                    "Warning: --use-llm requires ANTHROPIC_API_KEY environment variable.",
+                    err=True,
+                )
+                sys.exit(1)
+
         if file:
             with open(file, encoding="utf-8") as f:
                 text = f.read()
@@ -63,6 +80,8 @@ def _build_cli():  # type: ignore[no-untyped-def]
         config = CoherenceConfig(
             sensitivity=sensitivity,
             analyze_horizon=not no_horizon,
+            use_llm=use_llm,
+            llm_model=llm_model,
         )
 
         report = analyze(text, original_question=question, trace_format=fmt, config=config)

@@ -65,6 +65,17 @@ def analyze(
         flags = detector.detect(parsed_steps, original_question)
         all_flags.extend(flags)
 
+    # LLM-powered second pass (opt-in)
+    if config.use_llm:
+        try:
+            from .llm import llm_analyze, merge_flags
+
+            llm_flags = llm_analyze(parsed_steps, original_question, config)
+            all_flags = merge_flags(all_flags, llm_flags)
+        except (ImportError, RuntimeError, Exception):
+            # If LLM fails for any reason, fall back to rule-based results
+            pass
+
     # Sort flags by step range start, then severity
     severity_order = {"critical": 0, "high": 1, "medium": 2, "low": 3}
     all_flags.sort(key=lambda f: (f.step_range[0], severity_order.get(f.severity.value, 4)))

@@ -25,6 +25,11 @@ With CLI support:
 pip install cot-coherence[cli]
 ```
 
+With LLM-powered detection:
+```bash
+pip install cot-coherence[llm]
+```
+
 ## Quick Start
 
 ```python
@@ -76,6 +81,30 @@ cot-coherence check trace.txt -s 0.8
 # Disable horizon analysis
 cot-coherence check trace.txt --no-horizon
 ```
+
+## LLM Mode (v0.2+)
+
+Rule-based detection is free and works offline. For higher accuracy, enable LLM-powered detection using Claude Haiku as a second-pass verifier:
+
+```bash
+export ANTHROPIC_API_KEY=your-key-here
+
+# CLI
+cot-coherence check trace.txt -q "your question" --use-llm
+
+# Python
+from cot_coherence import analyze, CoherenceConfig
+
+config = CoherenceConfig(use_llm=True)
+report = analyze(trace_text, original_question="...", config=config)
+```
+
+The LLM:
+- **Validates** rule-based flags (reduces false positives)
+- **Discovers** issues the rules missed (reduces false negatives)
+- **Enriches** flag summaries with better explanations
+
+Cost: ~$0.001 per trace (single API call). If the API fails, rule-based results are returned automatically.
 
 ## Configuration
 
