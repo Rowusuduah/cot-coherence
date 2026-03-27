@@ -51,8 +51,8 @@ class TestCircularReturnDetector:
         assert len(flags) == 0
 
     def test_fixture_trace(self, circular_return_trace):
-        from cot_coherence.parser import parse_trace
         from cot_coherence.models import TraceInput
+        from cot_coherence.parser import parse_trace
         steps = parse_trace(TraceInput(text=circular_return_trace))
         flags = self.detector.detect(steps)
         assert len(flags) >= 1
