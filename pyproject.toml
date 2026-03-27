@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cot-coherence"
+version = "0.1.0"
+description = "Detect silent incoherence in AI chain-of-thought reasoning"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+authors = [
+    { name = "Richmond Owusu Duah" },
+]
+keywords = [
+    "ai",
+    "chain-of-thought",
+    "reasoning",
+    "coherence",
+    "llm",
+    "evaluation",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "pydantic>=2.0,<3.0",
+]
+
+[project.optional-dependencies]
+llm = ["anthropic>=0.39.0"]
+cli = ["click>=8.0", "rich>=13.0"]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4.0",
+    "mypy>=1.0",
+]
+all = ["cot-coherence[llm,cli,dev]"]
+
+[project.scripts]
+cot-coherence = "cot_coherence.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/richmondowusuduah/cot-coherence"
+Repository = "https://github.com/richmondowusuduah/cot-coherence"
+Issues = "https://github.com/richmondowusuduah/cot-coherence/issues"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+
+[tool.setuptools.packages.find]
+include = ["cot_coherence*"]

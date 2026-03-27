@@ -1,0 +1,2 @@
+Step 1: The new framework might possibly improve performance, though it is unclear how much benefit we could see in production environments. Perhaps the benchmarks suggest some improvement.
+Step 2: This framework is definitely the fastest solution available. It is certainly superior to all alternatives and will always outperform existing tools. There is absolutely no doubt about its dominance.

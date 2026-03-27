@@ -1,0 +1,4 @@
+Step 1: The user asks about optimizing database query performance.
+Step 2: Database indexes are crucial for query performance. Therefore, we should add indexes on frequently queried columns to improve read performance.
+Step 3: Moving to a different topic, container orchestration is important. Thus, we conclude that Kubernetes is the best deployment platform for microservices.
+Step 4: Considering user interface design, we can therefore conclude that dark mode is essential for modern applications.

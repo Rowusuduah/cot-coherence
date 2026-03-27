@@ -1,0 +1,4 @@
+Step 1: Given that the database uses PostgreSQL with row-level security policies, we need to consider how authentication integrates with the query layer.
+Step 2: The frontend application uses React with TypeScript and communicates via a REST API.
+Step 3: The color scheme should follow Material Design guidelines for consistency across the application.
+Step 4: Therefore, the application architecture is well-designed for modern web development.

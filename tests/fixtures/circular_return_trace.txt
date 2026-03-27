@@ -1,0 +1,4 @@
+Step 1: Machine learning models require large datasets for training. Data quality and quantity are both important factors in model performance.
+Step 2: Neural networks use backpropagation to adjust weights during training, optimizing the loss function through gradient descent.
+Step 3: Transfer learning allows pre-trained models to be fine-tuned on smaller domain-specific datasets, reducing the need for large amounts of training data.
+Step 4: Machine learning models need big datasets to train effectively. The quality and amount of data are key factors that determine how well the model performs.
